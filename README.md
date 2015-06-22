@@ -1,72 +1,101 @@
 # travis-test
 [![Build Status](https://travis-ci.org/elviswxy/travis-test.png)](https://travis-ci.org/elviswxy/travis-test)
 
-Installation travis
+首先，使[Travis CI](https://travis-ci.org/)通过`github OAuth`认证.
 
-首先，使Travis CI通过github OAuth认证。
+点击https://travis-ci.org/右上角的`Sign in with GitHub`按钮，输入自己的github账号和密码，并允许Travis CI的认证。
 
-点击https://travis-ci.org/右上角的Sign in with GitHub按钮，输入自己的github账号和密码，并允许Travis CI的认证。
+然后，激活`GitHub Service Hook`。
 
-然后，激活GitHub Service Hook。
-
-GitHub给用户提供了一个Service Hook接口,只要用户对host在github上的repository作用了一些action(比如push，pull)，就会触发相应的Service Hook。而Travis CI正是基于这个原理来trigger你的build。当你发起一个push操作时，就会trigger Travis CI的服务。
+GitHub给用户提供了一个`Service Hook`接口,只要用户对host在github上的repository作用了一些action(比如push，pull)，就会触发相应的`Service Hook`。而Travis CI正是基于这个原理来trigger你的build。当你发起一个push操作时，就会trigger Travis CI的服务。
 
 设置方法是访问Travis CI的profile，选择相应的repository打开Service Hook开关。
 
 然后登陆你的github，访问具体的repository的Service Hook页面，确保设置了Travis CI Hook的github name和travis token。
 
+#Installation travis in local computer
+
 Make sure you have at least Ruby 1.9.3 (2.0.0 recommended) installed.
 
-Updating your Ruby
+##Updating your Ruby
 
 If you have an outdated Ruby version, you should use your package system or a Ruby Installer to install a recent Ruby.
 
 Ubuntu:
-
+```
 $ sudo apt-get install python-software-properties
 $ sudo apt-add-repository ppa:brightbox/ruby-ng
 $ sudo apt-get update
 $ sudo apt-get install ruby2.1 ruby-switch
 $ sudo ruby-switch --set ruby2.1
-
+```
 
 Alternatively, you can use a Ruby version management tool such as rvm, rbenv or chruby. This is only recommended if you need to run multiple versions of Ruby.
 
 You can of course always compile Ruby from source, though then you are left with the hassle of keeping it up to date and making sure that everything is set up properly.
 
-Troubleshooting
+##Troubleshooting
 
 Ubuntu
 
 On certain versions of Ubuntu (e.g., 13.10), you need to install the corresponding -dev package in order to build the C extension on which travis gem depends.
 
 If you updated to Ruby 2.1 as shown above:
-
+```
 $ sudo apt-get install ruby2.1-dev
-
+```
 You can check your Ruby version by running ruby -v:
-
+```
 $ ruby -v
 ruby 2.0.0p195 (2013-05-14 revision 40734) [x86_64-darwin12.3.0]
+```
 Then run:
-
+```
 $ gem install travis -v 1.7.7 --no-rdoc --no-ri
-
-if you meet a bug: Error: failed to build gem native extension
-
+```
+if you meet a bug: `Error: failed to build gem native extension`. Run
+```
 $ sudo apt-get install ruby2.1-dev
+```
 Now make sure everything is working:
-
+```
 $ travis version
 1.7.7
-
-Development Version
+```
+##Development Version
 
 You can also install the development version via RubyGems:
-
+```
 $ sudo gem install travis --pre
 We automatically publish a new development version after every successful build.
+```
+#First test: helloworld
 
+## Set the config of `.travis.yml`
+给repository配置`.travis.yml`文件。该文件需要放置在repository的跟目录下。
+
+`.travis.yml`文件是一个相当重要的文件，里面需要配置你所使用的语言、运行环境、构建工具、构建脚本、通知方式等。最重要的是设置语言，其它的都有相应的默认值。
+
+这是我为了测试`hello world`设置的.travis.yml文件。主要测试目的是在结果文件中输出hello worl.
+
+
+```
+language: python
+
+python:
+    - '2.7'
+
+script:
+    - python helloworld.py
+
+```
+你可以使用一个`travis-lint`来检查你的yml文件是否是有效的。他是ruby写的一个gem，需要ruby的运行环境。安装方式在上面章节已经解释。你只需要在你的repository根目录下运行travis-lint即可进行检查。
+
+想要更进一步的关于`.travis.yml`的配置请参见：http://about.travis-ci.org/docs/user/build-configuration/
+
+完成配置后。现在发起一个push就可以trigger你在Travis CI的build。 这时候登陆Travis CI可以看到你的Build的状态和日志。
+
+The results log of hello world python test, we can see the hello world is printed.
 ```
 Using worker: worker-linux-docker-1cc16ef5.prod.travis-ci.org:travis-linux-7
 system_info
@@ -155,4 +184,9 @@ Could not locate requirements.txt. Override the install: key in your .travis.yml
 Hello, World!
 The command "python helloworld.py" exited with 0.
 Done. Your build exited with 0.
+```
+# Set the build logo.
+你可以在respository的README.md文件中加入build状态图标。方法是在在该文件中加入 
+```
+[![Build Status](https://travis-ci.org/[YOUR_GITHUB_USERNAME]/[YOUR_PROJECT_NAME].png)](https://travis-ci.org/[YOUR_GITHUB_USERNAME]/[YOUR_PROJECT_NAME])
 ```
