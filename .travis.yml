@@ -4,4 +4,7 @@ python:
     - "2.6"  
     - "2.7"
 
+script:  
+    - python helloworld.py test 
+
 
